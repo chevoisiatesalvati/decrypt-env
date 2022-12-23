@@ -1,29 +1,34 @@
+"use strict";
 var readlineSync = require("readline-sync");
 var fs = require("fs");
 // Function to delete .env file
 const envDelete = () => {
-  try {
-    fs.unlinkSync("./.env");
-    console.log(`.env file removed.`);
-  } catch (err) {
-    console.error(err);
+  let ans = readlineSync.keyInYN(`Do you want to delete .env file?`);
+  console.log(ans);
+  if (ans) {
+    try {
+      fs.unlinkSync("./.env");
+      console.log(`.env file deleted.`);
+    } catch (err) {
+      logger.error(err);
+    }
+  } else {
+    console.log(`Ok.`);
   }
 };
 // Decrypt .env file
-while (true) {
-  let pwd = readlineSync.question("Enter the password: ");
-  require("dotenvenc").decrypt({ passwd: pwd });
-  require("dotenv").config();
-  console.log(process.env.DECRYPTED);
-  if (process.env.DECRYPTED == "ok") {
-    console.log(`Correct! You're my guy :)`);
-    envDelete();
-    break;
-  } else {
-    console.error("Wrong password.");
-    envDelete();
-    process.exit(1);
-  }
+let pwd = readlineSync.questionNewPassword("Enter the password: ", {
+  min: 4,
+});
+require("dotenvenc").decrypt({ passwd: pwd });
+require("dotenv").config();
+if (process.env.DECRYPTED == "ok") {
+  console.log(`Correct! You're my guy :)`);
+  envDelete();
+} else {
+  console.error("Wrong password.");
+  envDelete();
+  process.exit(1);
 }
 
 console.log(process.env.SECRET);
