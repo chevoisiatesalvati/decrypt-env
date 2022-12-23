@@ -12,7 +12,6 @@ const envDelete = () => {
 // Decrypt .env file
 while (true) {
   let pwd = readlineSync.question("Enter the password: ");
-  console.log(pwd);
   require("dotenvenc").decrypt({ passwd: pwd });
   require("dotenv").config();
   console.log(process.env.DECRYPTED);
